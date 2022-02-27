@@ -1,10 +1,10 @@
 
 ---
-title: "Documentation"
-linkTitle: "Documentation"
+title: "Contribute"
+linkTitle: "Contribute"
 menu:
   main:
-    weight: 10
+    weight: 30
 ---
 
 {{% pageinfo %}}

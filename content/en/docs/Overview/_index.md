@@ -3,31 +3,106 @@ title: "Overview"
 linkTitle: "Overview"
 weight: 1
 description: >
-  Here's where your user finds out if your project is for them.
+  Introduction to Kustomize.
 ---
 
-{{% pageinfo %}}
-This is a placeholder page that shows you how to use this template site.
-{{% /pageinfo %}}
+Kustomize provides a solution for customizing Kubernetes resource configuration free from templates and DSLs.
+
+Kustomize lets you customize raw, template-free YAML files for multiple purposes, leaving the original YAML untouched and usable as is.
+
+Kustomize targets kubernetes; it understands and can patch kubernetes style API objects. It’s like make, in that what it does is declared in a file, and it’s like sed, in that it emits edited text.
+
+## Usage
+
+### 1) Make a `kustomization` file
+
+In some directory containing your YAML `resource`
+files (deployments, services, configmaps, etc.), create a
+`kustomization` file.
+
+This file should declare those resources, and any
+customization to apply to them, e.g. _add a common
+label_.
+
+File structure:
+
+ ```
+ ~/someApp
+ ├── deployment.yaml
+ ├── kustomization.yaml
+ └── service.yaml
+ ```
+
+The resources in this directory could be a fork of
+someone else's configuration.  If so, you can easily
+rebase from the source material to capture
+improvements, because you don't modify the resources
+directly.
+
+Generate customized YAML with:
+
+```
+kustomize build ~/someApp
+```
+
+The YAML can be directly `applied` to a cluster:
+
+ ```
+ kustomize build ~/someApp | kubectl apply -f -
+ ```
 
 
-The Overview is where your users find out about your project. Depending on the size of your docset, you can have a separate overview page (like this one) or put your overview contents in the Documentation landing page (like in the Docsy User Guide). 
+### 2) Create `variants` using `overlays`
 
-Try answering these questions for your user in this page:
+Manage traditional `variants` of a configuration - like
+_development_, _staging_ and _production_ - using
+`overlays` that modify a common `base`.
 
-## What is it?
+File structure:
+ ```
+ ~/someApp
+ ├── base
+ │   ├── deployment.yaml
+ │   ├── kustomization.yaml
+ │   └── service.yaml
+ └── overlays
+     ├── development
+     │   ├── cpu_count.yaml
+     │   ├── kustomization.yaml
+     │   └── replica_count.yaml
+     └── production
+         ├── cpu_count.yaml
+         ├── kustomization.yaml
+         └── replica_count.yaml
+ ```
 
-Introduce your project, including what it does or lets you do, why you would use it, and its primary goal (and how it achieves it). This should be similar to your README description, though you can go into a little more detail here if you want.
+Take the work from step (1) above, move it into a
+`someApp` subdirectory called `base`, then
+place overlays in a sibling directory.
 
-## Why do I want it?
+An overlay is just another kustomization, referring to
+the base, and referring to patches to apply to that
+base.
 
-Help your user know if your project will help them. Useful information can include: 
+This arrangement makes it easy to manage your
+configuration with `git`.  The base could have files
+from an upstream repository managed by someone else.
+The overlays could be in a repository you own.
+Arranging the repo clones as siblings on disk avoids
+the need for git submodules (though that works fine, if
+you are a submodule fan).
 
-* **What is it good for?**: What types of problems does your project solve? What are the benefits of using it?
+Generate YAML with
 
-* **What is it not good for?**: For example, point out situations that might intuitively seem suited for your project, but aren't for some reason. Also mention known limitations, scaling issues, or anything else that might let your users know if the project is not for them.
+```sh
+kustomize build ~/someApp/overlays/production
+```
 
-* **What is it *not yet* good for?**: Highlight any useful features that are coming soon.
+The YAML can be directly `applied` to a cluster:
+
+ ```sh
+ kustomize build ~/someApp/overlays/production | kubectl apply -f -
+ ```
 
 ## Where should I go next?
 
