@@ -11,6 +11,8 @@ The top bar is customized with the sections I think make sense to split. However
 
 ## Building
 
+Build and run using Docker or Hugo, then access the site at `http://localhost:1313`.
+
 ### Docker
 Dependencies:
 * [docker](https://docs.docker.com/engine/install/)
