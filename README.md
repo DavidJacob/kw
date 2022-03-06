@@ -29,9 +29,7 @@ Building using the `hugo` command requires the following dependencies:
 * [Node.js](https://nodejs.org/en/)
 * npm dependencies
    ```bash
-   npm install -D autoprefixer
-   npm install -D postcss-cli
-   npm install -D postcss
+   npm install
    ```
 Start in development mode:
 ```bash
